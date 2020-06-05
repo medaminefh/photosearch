@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import ImageCard from "./components/ImageCard";
+import ImageSearch from "./components/ImageSearch";
 
-function App() {
+const App = () => {
+  const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [term, setTerm] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://pixabay.com/api/?key=${process.env.REACT_APP_API_KEY}&q=${term}&image_type=photo&pretty=true`
+      )
+      .then(
+        (d) => {
+          const { data } = d;
+          setImages(data.hits);
+          setIsLoading(false);
+        },
+        [term]
+      )
+      .catch((err) => console.error("err :" + err));
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container mx-auto">
+      <ImageSearch searchText={(text) => setTerm(text)} />
+      {!isLoading && !images.length && (
+        <h1 className="text-5xl text-center mx-auto mt-32">
+          No Images Found. please try other Terms
+        </h1>
+      )}
+      {isLoading ? (
+        <h1 className="text-6xl text-center mx-auto mt-32">Loading ...</h1>
+      ) : (
+        <div className="grid grid-cols-3 gap-4">
+          {images.map((img) => (
+            <ImageCard image={img} key={img.id} />
+          ))}
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default App;
