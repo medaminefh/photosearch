@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ImageCard from "./components/ImageCard";
 import ImageSearch from "./components/ImageSearch";
-import { config } from "./config";
+import { CONFIG } from "./config";
 
 const App = () => {
   const [images, setImages] = useState([]);
@@ -12,7 +12,7 @@ const App = () => {
   useEffect(() => {
     axios
       .get(
-        `https://pixabay.com/api/?key=${config.REACT_APP_API_KEY}&q=${term}&image_type=photo&pretty=true`
+        `https://pixabay.com/api/?key=${CONFIG.API_KEY}&q=${term}&image_type=photo&pretty=true`
       )
       .then(
         (d) => {
